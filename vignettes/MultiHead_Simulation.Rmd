@@ -1,0 +1,81 @@
+---
+title: "MultiHead Simulation"
+author: "Danilo Cillario"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Packaging Simulation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+With `simulateMH()` is possible to simulate the results of the Multi Head Weighting Machine that produce a box of praline.
+These machine weights the input praline and try to produce multi box of its where the box weight exceeds the declared weight of the minimun quantity possible.
+
+## Function
+
+Below the sintax of the function `simulateMH()`:
+
+    res <- simulatePack(source, target, declared, min.pcs, step=1000)
+    
+where:
+
+    source	    :   a vector containing the weight of the single praline
+    target      :   the target weight of the MultiHead
+    declared    :   declared weight (not used)
+    min.pcs     :   the minimun number of piece in the box (only to check the results)
+    step        :   simulation steps, number of pack to be simulated
+
+    res         :   result list, containing:
+                    res[['data']]    data frame of all single pack simulated
+                    res[['result']]  data frame of the rusults
+
+### Algorithm
+
+.....
+
+
+## Examples
+
+In the following example we could see the frequency distribution of the weight of a box containing 15 Ferrero Raffaello 
+using 100 weight of single praline generated with `rnorm()` 
+
+```{r echo=TRUE, fig.heigth=6, fig.show='hold', fig.width=7.1, message=FALSE, warning=FALSE, results='hold'}
+library(ggplot2)
+library(tecTools)
+dati <- rnorm(100, 10.1, 0.3)
+b <- simulateMH(dati, 150, 150, 15)
+```
+
+is possible check the simulation results:
+
+```{r, echo=1, eval=2,  fig.show='hold', fig.width=7.1, fig.heigth=6, warning=FALSE, results='hold'}
+head(b[['data']], 5)
+knitr::kable(head(b[['data']], 5))
+```
+
+or to plot the weight of the simulated boxes:
+
+```{r, echo=TRUE, fig.show='hold', fig.width=7.1, fig.heigth=6, warning=FALSE, results='hold'}
+hist(b[['data']]$peso, xlab='g', main='Peso delle confezioni')
+```
+
+or to check the number of pieces in the simulated boxes:
+
+```{r, echo=TRUE, fig.show='hold', fig.width=7.1, fig.heigth=6, warning=FALSE, results='hold'}
+b[['results']]
+```
+
+or manually:
+
+```{r, echo=TRUE, fig.show='hold', fig.width=7.1, fig.heigth=6, warning=FALSE, results='hold'}
+paste(length(b[['data']]$pezzi[b[['data']]$pezzi == 15]), ' box contains ', 15, ' pieces', sep='')
+paste(length(b[['data']]$pezzi[b[['data']]$pezzi == 16]), ' box contains ', 16, ' pieces', sep='')
+paste(length(b[['data']]$pezzi[b[['data']]$pezzi == 17]), ' box contains ', 17, ' pieces', sep='')
+```
+
+
+## Reference
+
+None
+

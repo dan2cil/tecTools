@@ -1,0 +1,79 @@
+---
+title: "Tempering Simulation"
+author: "Danilo Cillario"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tempering Simulation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The `tempering()` function is useful to simulate the crystallization of cocoa butter in different condiction:
+
+* Different percentage of cocoa butter in chocolate
+* Different amount of cocoa butter present at the beginning of the simulation
+* Different temperature at the beginning of the simulation
+
+## Function
+
+Below the sintax of the function `tempering()`:
+
+    tempering(BC = 0.42, t0 = 35, f0 = 1, a = 100, n = 3, k = 5)
+    
+where:
+
+    BC  :   cocoa butter contents (0-1)
+    t0  :   initial temperature of simulation (raffreddamento)                                  35°C
+    f0  :   initially present amount of crystals [J/g or % solid fat]                            1%
+    a   :   value for f as t approaches infinity [J/g or % solid fat]                          100%
+    n   :   order of reverse reaction, linked to asymmetry of curve [-]                          3
+    k   :   rate constant [h-1]                                                                  5
+
+## Formula used
+
+In the `tempering()` function we implement the Foubert formula (differenzial => algebraic):
+
+>$\frac{dh}{dt} = K * (h^n -h)$ &nbsp;&nbsp; => &nbsp;&nbsp; $f = [1-[1+((1-\frac{f_0}{a})-1)* e^{-(1-n)*K*t}]^{\frac{1}{1-n}}]$
+
+where:
+
+    h  :    remaining crystallizable fat at time t [-]  
+    f  :    amount of crystallization at time t [J/g or % solid fat]  
+    a  :    value for f as t approaches infinity [J/g or % solid fat]  
+    f0 :    initially present amount of crystals [J/g or % solid fat]  
+    K  :    rate constant [h-1 ]  
+    n  :    order of reverse reaction, linked to asymmetry of curve [-]  
+
+## Examples
+
+In the following graphic we could compare the crystallizazion courve of three different chocolate, with different cocoa butter contents:
+
+* with 30% of cocoa butter
+* with 35% of cocoa butter
+* with 40% of cocoa butter
+
+```{r, echo=TRUE, fig.show='hold', fig.width=7.1, fig.height=6.5, warning=FALSE, results='hold'}
+library(ggplot2)
+library(tecTools)
+x <- seq(0,1,0.025)
+y <- tempering(BC=0.42)$temperatura
+y2 <- tempering(BC=0.35)$temperatura
+y3 <- tempering(BC=0.30)$temperatura
+p <- ggplot(data.frame(x, y, y2, y3)) +
+  geom_line(aes(x=x,y=y, color='BC 42%')) +
+  geom_line(aes(x=x,y=y2, color='BC 35%')) +
+  geom_line(aes(x=x,y=y3, color='BC 30%')) +
+  scale_color_manual('Cioccolati', values=c('BC 42%'='red', 'BC 35%'='blue', 'BC 30%'='green'))
+p
+```
+
+## Reference
+
+The function  `tempering()` si basa sul lavoro presentato nei due seguenti articoli ^[Disponibili presso l'autore della libreria], in modo particolare nel primo:
+
+> "Modelling of the crystallization kinetics of cocoa butter"  
+Imogen Foubert; Peter Vanrolleghem; Bert Vanhoutte; Thijs Keersebilck; A. Huyghebaert and Koen Dewettinck
+
+> "Modelling isothermal cocoa butter criystallization: influence of temperature and chemical composition"  
+Imogen FOUBERT

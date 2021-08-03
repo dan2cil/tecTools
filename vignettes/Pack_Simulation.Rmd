@@ -1,0 +1,83 @@
+---
+title: "Packaging Simulation"
+author: "Danilo Cillario"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Packaging Simulation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+With `simulatePack()` is possible to:
+
+* simulate the weight distribution of a mixed box of product
+* check the declared weight of the box 
+* check if it possible to change the declared weight of the box
+
+## Function
+
+Below the sintax of the function `simulatePack()`:
+
+    simulatePack(source, composition, declared, plotce = F, main = "Pesi medi", step = 1e+05)
+    
+where:
+
+    source	    :   a data frame with the weight of the single praline
+    composition :   a data frame with the composition of the pack
+    declared    :   declared weight
+    plotce      :   boolean, T if you want to plot T1 and T2, otherwise F
+    main        :   optional main title
+    step        :   simulation steps, number of pack to be simulated
+
+
+### Data Frame structure
+
+```{r, echo=FALSE}
+library(ggplot2)
+library(tecTools)
+```
+
+In the `source` data frame we save the weight of a sample af all the product we want to use in a mixed box:
+
+```{r, echo=TRUE}
+data(source)                     # load Thorntons Continental Praline weight
+knitr::kable(head(source, 5))
+```
+
+In the `composition` data frame we save the composition of the mixed box:
+
+```{r, echo=TRUE}
+data(composition)                # composition of Thorntons Continental box
+knitr::kable(composition)
+```
+
+
+## Examples
+
+In the following example we could see the frequency distribution of the weight of a box containing 16 Ferrero Rocher 
+using the weight of the single praline products on line 1 of Alba
+
+```{r, echo=TRUE, fig.show='hold', fig.width=7.1, fig.heigth=6, warning=FALSE, results='hold'}
+library(ggplot2)
+library(tecTools)
+data(L1_max)                   # load Rocher weight
+a <- data.frame(RO=c(16))      # composition of box of T.16 Rocher
+simulatePack(L1_max, a, 200.5)
+```
+
+the same plotting the T1 and T2 according to Dir. n. 76/211/CEE
+
+```{r, echo=TRUE, fig.show='hold', fig.width=7.1, fig.heigth=6, warning=FALSE, results='hold'}
+library(ggplot2)
+library(tecTools)
+data(L1_max)                   # load Rocher weight
+a <- data.frame(RO=c(16))      # composition of box of T.16 Rocher
+simulatePack(L1_max, a, 200.5, plotce=T)
+```
+
+## Reference
+
+The calculation of T1 and T2 are based on Dir. n. 76/211/CEE (Legge 25.10.78 n.690 in Italy) "approximation of the laws of the Member States relating to the making-up by weight or by volume of certain prepackaged products " ^[available in internet]:
+
+> http://eur-lex.europa.eu/legal-content/it/ALL/?uri=CELEX%3A31976L0211
